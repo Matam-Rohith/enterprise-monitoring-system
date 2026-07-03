@@ -15,34 +15,17 @@ services:
         value: 5000
       - key: JWT_EXPIRES_IN
         value: 7d
-      - key: DB_HOST
-        fromDatabase:
-          name: ems-postgres
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: ems-postgres
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: ems-postgres
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: ems-postgres
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: ems-postgres
-          property: password
       - key: JWT_SECRET
         generateValue: true
-      - key: CORS_ORIGIN
-        value: "*"
-
-databases:
-  - name: ems-postgres
-    databaseName: enterprise_monitoring
-    user: ems_user
-    region: oregon
-    plan: free
+      - key: DB_HOST
+        value: dpg-d8tt9hbsq97s73chr1i0-a
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        value: library_management_db_mjru
+      - key: DB_USER
+        value: library_management_db_mjru_user
+      - key: DB_PASSWORD
+        value: nZSZbXFiny5CdQJ64RLDsC42P4saMnWN
+      - key: DB_SSL
+        value: true
