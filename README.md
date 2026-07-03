@@ -1,49 +1,33 @@
-# Enterprise Application Monitoring & Incident Management System
+# Enterprise Monitoring System
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
-![React](https://img.shields.io/badge/react-18.x-blue)
+A full-stack enterprise-grade monitoring system with real-time dashboards, alerting, and analytics.
 
-A full-stack enterprise-grade monitoring and incident management platform featuring real-time alerts, service health dashboards, on-call scheduling, and incident lifecycle management.
+## Features
 
-## 🚀 Features
+- Real-time monitoring via WebSockets
+- RESTful API with Express.js
+- PostgreSQL database integration
+- Docker containerization
+- CI/CD pipeline with GitHub Actions
+- JWT-based authentication
+- Role-based access control
 
-- **Real-time Service Monitoring** — Track uptime, response times, and health status of all services
-- **Incident Management** — Create, assign, escalate, and resolve incidents with full audit trail
-- **Alert Engine** — Rule-based alerting with email, Slack, and webhook notifications
-- **On-Call Scheduling** — Rotations, escalation policies, and override management
-- **Dashboard & Analytics** — MTTR, MTTD, SLA tracking, and custom reports
-- **Multi-tenant** — Org-level isolation with role-based access control (RBAC)
+## Tech Stack
 
-## 🛠 Tech Stack
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: PostgreSQL
+- **Real-time**: Socket.IO
+- **Auth**: JWT
+- **Containerization**: Docker & Docker Compose
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 18, TypeScript, TailwindCSS, Recharts |
-| Backend | Node.js, Express.js, TypeScript |
-| Database | PostgreSQL + Redis (caching & pub/sub) |
-| Auth | JWT + Refresh tokens |
-| Real-time | Socket.IO |
-| Infra | Docker, GitHub Actions CI/CD |
-
-## 📁 Project Structure
-
-```
-enterprise-monitoring-system/
-├── client/          # React frontend
-├── server/          # Node.js backend API
-├── docker-compose.yml
-├── .github/workflows/  # CI/CD pipelines
-└── docs/            # API documentation
-```
-
-## 🏃 Quick Start
+## Getting Started
 
 ### Prerequisites
+
 - Node.js >= 18
-- PostgreSQL >= 14
-- Redis >= 7
-- Docker (optional)
+- Docker & Docker Compose
+- PostgreSQL
 
 ### Installation
 
@@ -53,33 +37,73 @@ git clone https://github.com/Matam-Rohith/enterprise-monitoring-system.git
 cd enterprise-monitoring-system
 
 # Install dependencies
-npm run install:all
+npm install
 
-# Setup environment
-cp server/.env.example server/.env
-cp client/.env.example client/.env
+# Copy environment variables
+cp .env.example .env
 
-# Run database migrations
-npm run db:migrate
+# Start with Docker
+docker-compose up -d
 
-# Start development servers
+# Or run locally
 npm run dev
 ```
 
-### Docker Setup
+### Environment Variables
 
-```bash
-docker-compose up -d
+```env
+NODE_ENV=development
+PORT=5000
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=enterprise_monitoring
+DB_USER=postgres
+DB_PASSWORD=your_password
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
+CORS_ORIGIN=http://localhost:3000
 ```
 
-App runs at: http://localhost:3000  
-API runs at: http://localhost:5000
+## API Documentation
 
-## 🔐 Default Credentials (Dev)
+### Auth Routes
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login
+- `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - Get current user
 
-- **Admin**: admin@example.com / Admin@123
-- **Viewer**: viewer@example.com / Viewer@123
+### Monitoring Routes
+- `GET /api/metrics` - Get all metrics
+- `POST /api/metrics` - Create metric entry
+- `GET /api/alerts` - Get all alerts
+- `POST /api/alerts` - Create alert
+- `PUT /api/alerts/:id` - Update alert
+- `DELETE /api/alerts/:id` - Delete alert
 
-## 📄 License
+### System Routes
+- `GET /api/system/health` - Health check
+- `GET /api/system/status` - System status
 
-MIT © [Matam Rohith](https://rohith-portfolio-six.vercel.app/)
+## Docker
+
+```bash
+# Build and start all services
+docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# View logs
+docker-compose logs -f
+```
+
+## Running Tests
+
+```bash
+npm test
+npm run test:coverage
+```
+
+## License
+
+MIT
