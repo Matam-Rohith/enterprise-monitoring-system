@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: enterprise-monitoring-system
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/system/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: DB_HOST
+        fromDatabase:
+          name: ems-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ems-postgres
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: ems-postgres
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: ems-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: ems-postgres
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: "*"
+
+databases:
+  - name: ems-postgres
+    databaseName: enterprise_monitoring
+    user: ems_user
+    region: oregon
+    plan: free
