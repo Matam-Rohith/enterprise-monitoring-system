@@ -13,7 +13,7 @@ const getMetrics = async (req, res, next) => {
     sql += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(limitNum, offset);
     const result = await query(sql, params);
-    const countResult = await query('SELECT COUNT(*) FROM metrics WHERE 1=1', []);
+    const countResult = await query('SELECT COUNT(*) FROM metrics', []);
     return paginatedResponse(res, result.rows, parseInt(countResult.rows[0].count), page, limitNum);
   } catch (err) { next(err); }
 };
@@ -29,23 +29,21 @@ const createMetric = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-const getMetric = async (req, res, next) => {
+const getMetricsSummary = async (req, res, next) => {
+  try {
+    const result = await query(
+      'SELECT service_name, metric_type, AVG(value) as avg_value, MAX(value) as max_value, MIN(value) as min_value, COUNT(*) as count FROM metrics GROUP BY service_name, metric_type ORDER BY service_name',
+      []
+    );
+    return successResponse(res, { summary: result.rows });
+  } catch (err) { next(err); }
+};
+
+const getMetricById = async (req, res, next) => {
   try {
     const result = await query('SELECT * FROM metrics WHERE id = $1', [req.params.id]);
     if (!result.rows.length) return res.status(404).json({ success: false, message: 'Metric not found' });
     return successResponse(res, { metric: result.rows[0] });
-  } catch (err) { next(err); }
-};
-
-const updateMetric = async (req, res, next) => {
-  try {
-    const { value, unit, metadata } = req.body;
-    const result = await query(
-      'UPDATE metrics SET value = $1, unit = $2, metadata = $3, updated_at = NOW() WHERE id = $4 RETURNING *',
-      [value, unit, metadata, req.params.id]
-    );
-    if (!result.rows.length) return res.status(404).json({ success: false, message: 'Metric not found' });
-    return successResponse(res, { metric: result.rows[0] }, 'Metric updated');
   } catch (err) { next(err); }
 };
 
@@ -57,4 +55,4 @@ const deleteMetric = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getMetrics, createMetric, getMetric, updateMetric, deleteMetric };
+module.exports = { getMetrics, createMetric, getMetricsSummary, getMetricById, deleteMetric };
