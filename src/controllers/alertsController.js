@@ -19,7 +19,7 @@ const createAlert = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-const getAlert = async (req, res, next) => {
+const getAlertById = async (req, res, next) => {
   try {
     const result = await query('SELECT * FROM alerts WHERE id = $1', [req.params.id]);
     if (!result.rows.length) return res.status(404).json({ success: false, message: 'Alert not found' });
@@ -58,4 +58,4 @@ const acknowledgeAlert = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getAlerts, createAlert, getAlert, updateAlert, deleteAlert, acknowledgeAlert };
+module.exports = { getAlerts, createAlert, getAlertById, updateAlert, deleteAlert, acknowledgeAlert };
