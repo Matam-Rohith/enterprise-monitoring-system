@@ -1,20 +1,20 @@
 const { query } = require('../db');
 const { successResponse, createdResponse, paginatedResponse } = require('../utils/response');
-const { getPagination } = require('../utils/helpers');
+const { parsePagination } = require('../utils/helpers');
 
 const getMetrics = async (req, res, next) => {
   try {
     const { page = 1, limit = 20, service, type } = req.query;
-    const { offset, limitNum } = getPagination(page, limit);
+    const { offset } = parsePagination(parseInt(page), parseInt(limit));
     let sql = 'SELECT * FROM metrics WHERE 1=1';
     const params = [];
     if (service) { params.push(service); sql += ` AND service_name = $${params.length}`; }
     if (type) { params.push(type); sql += ` AND metric_type = $${params.length}`; }
     sql += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(limitNum, offset);
+    params.push(parseInt(limit), offset);
     const result = await query(sql, params);
     const countResult = await query('SELECT COUNT(*) FROM metrics', []);
-    return paginatedResponse(res, result.rows, parseInt(countResult.rows[0].count), page, limitNum);
+    return paginatedResponse(res, result.rows, parseInt(countResult.rows[0].count), parseInt(page), parseInt(limit));
   } catch (err) { next(err); }
 };
 
