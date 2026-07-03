@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: monitor_user
+      POSTGRES_PASSWORD: monitor_pass
+      POSTGRES_DB: monitor_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U monitor_user']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redisdata:/data
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    environment:
+      DATABASE_URL: postgresql://monitor_user:monitor_pass@postgres:5432/monitor_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: supersecretjwtkey
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - '3000:80'
+    depends_on:
+      - server
+
+volumes:
+  pgdata:
+  redisdata:
