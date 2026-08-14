@@ -11,7 +11,8 @@ async function startServer() {
   try {
     // Connect to database
     await connectDB();
-    logger.info('Database connected successfully');
+    await require('./db/migrate').runMigrations();
+    logger.info('Database connected and schema initialized successfully');
 
     // Create HTTP server
     const server = http.createServer(app);
