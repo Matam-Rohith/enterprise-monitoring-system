@@ -9,10 +9,15 @@ const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
-    // Connect to database
-    await connectDB();
-    await require('./db/migrate').runMigrations();
-    logger.info('Database connected and schema initialized successfully');
+    // Database availability must not prevent the HTTP service from starting.
+    // This keeps the health endpoint available while the database is repaired.
+    try {
+      await connectDB();
+      await require('./db/migrate').runMigrations();
+      logger.info('Database connected and schema initialized successfully');
+    } catch (dbError) {
+      logger.error('Database unavailable; starting in degraded mode:', dbError);
+    }
 
     // Create HTTP server
     const server = http.createServer(app);
