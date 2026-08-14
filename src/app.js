@@ -33,6 +33,18 @@ app.use(morgan('combined', {
   stream: { write: (message) => logger.info(message.trim()) }
 }));
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    name: 'Enterprise Monitoring System',
+    status: 'online',
+    message: 'API is running',
+    health: '/api/system/health',
+    statusEndpoint: '/api/system/status',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Routes
 app.use('/api', routes);
 
