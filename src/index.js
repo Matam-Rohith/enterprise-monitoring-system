@@ -99,6 +99,18 @@ appInstance.use(express.json({ limit: '10mb' }));
 appInstance.use(express.urlencoded({ extended: true }));
 appInstance.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }));
 
+// Root endpoint
+appInstance.get('/', (req, res) => {
+  res.status(200).json({
+    name: 'Enterprise Monitoring System',
+    status: 'online',
+    message: 'API is running',
+    health: '/api/system/health',
+    statusEndpoint: '/api/system/status',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Routes
 appInstance.use('/api/auth', authRoutes);
 appInstance.use('/api/metrics', metricsRoutes);
