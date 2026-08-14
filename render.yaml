@@ -2,12 +2,12 @@ services:
   - type: web
     name: enterprise-monitoring-system
     runtime: node
-    region: oregon
+    region: singapore
     plan: free
     branch: main
     buildCommand: npm install
     startCommand: npm start
-    healthCheckPath: /api/system/health
+    healthCheckPath: /api/system/status
     envVars:
       - key: NODE_ENV
         value: production
@@ -18,14 +18,22 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: DB_HOST
-        value: dpg-d8tt9hbsq97s73chr1i0-a
+        fromDatabase: {name: enterprise-monitoring-db, property: host}
       - key: DB_PORT
-        value: 5432
+        fromDatabase: {name: enterprise-monitoring-db, property: port}
       - key: DB_NAME
-        value: library_management_db_mjru
+        fromDatabase: {name: enterprise-monitoring-db, property: database}
       - key: DB_USER
-        value: library_management_db_mjru_user
+        fromDatabase: {name: enterprise-monitoring-db, property: user}
       - key: DB_PASSWORD
-        value: nZSZbXFiny5CdQJ64RLDsC42P4saMnWN
+        fromDatabase: {name: enterprise-monitoring-db, property: password}
       - key: DB_SSL
-        value: true
+        value: "true"
+      - key: CORS_ORIGIN
+        sync: false
+
+databases:
+  - name: enterprise-monitoring-db
+    databaseName: enterprise_monitoring
+    user: enterprise_monitoring
+    plan: free
